@@ -25,22 +25,10 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
 
-  // --- BUG FIX: Resize Listener ---
-  // Jab window 1024px (lg) se badi ho, toh mobile menu ko false kar do
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMobileOpen(false);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const fetchChats = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://ask-freely.onrender.com/api/chat", {
+      const res = await axios.get("http://localhost:3000/api/chat", {
         withCredentials: true,
       });
       if (res.data.success) setChats(res.data.chats);
@@ -57,7 +45,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://ask-freely.onrender.com/api/chat/${actionChat._id}`, {
+      await axios.delete(`http://localhost:3000/api/chat/${actionChat._id}`, {
         withCredentials: true,
       });
       setIsDeleteModalOpen(false);
@@ -72,9 +60,9 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
     if (!newTitle.trim()) return;
     try {
       await axios.put(
-        `https://ask-freely.onrender.com/api/chat/rename/${actionChat._id}`,
+        `http://localhost:3000/api/chat/rename/${actionChat._id}`,
         { title: newTitle },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setIsRenameModalOpen(false);
       fetchChats();
@@ -85,7 +73,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
 
   const confirmLogout = async () => {
     try {
-      const res = await axios.get("https://ask-freely.onrender.com/api/auth/logout", {
+      const res = await axios.get("http://localhost:3000/api/auth/logout", {
         withCredentials: true,
       });
       if (res.data.success) {
@@ -107,36 +95,37 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
   return (
     <>
       <style>{`
+        /* Main class jisme scrollbar apply hoga */
         .custom-sidebar-scroll {
           overflow-y: auto;
           scrollbar-width: thin;
           scrollbar-color: #555 transparent;
         }
+
+        /* Chrome, Safari, and Edge */
         .custom-sidebar-scroll::-webkit-scrollbar {
-          width: 6px;
+          width: 6px; /* 4px bahut patla ho jata hai mobile/trackpad ke liye, 6px is better */
         }
+
         .custom-sidebar-scroll::-webkit-scrollbar-track {
           background: transparent;
         }
+
         .custom-sidebar-scroll::-webkit-scrollbar-thumb {
-          background: #555;
+          background: #555; /* Color updated for better visibility */
           border-radius: 10px;
-          border: 1px solid transparent;
+          border: 1px solid transparent; /* Taaki thumb track se thoda door dikhe */
           background-clip: content-box;
         }
         .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
-          background: #777;
+          background: #777; /* Hover par thoda aur light */
         }
       `}</style>
-
       {/* Mobile Toggle Button */}
-      <div className="lg:hidden fixed top-5 left-4 z-50">
+      <div className="lg:hidden fixed top-5 left-4 z-60 ">
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMobileOpen(true);
-          }}
-          className="p-2 bg-[#bdc3c7] dark:bg-[#212121] border border-black/10 dark:border-white/10 rounded-md text-black dark:text-white shadow-lg cursor-pointer"
+          onClick={() => setIsMobileOpen(true)}
+          className="p-2 bg-[#bdc3c7] dark:bg-[#212121] border border-black/10 dark:border-white/10 rounded-md text-black dark:text-white shadow-lg"
         >
           <Menu size={20} />
         </button>
@@ -144,7 +133,6 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
 
       {/* Sidebar Main */}
       <div
-        onClick={(e) => e.stopPropagation()}
         className={`
         fixed lg:relative z-100 h-screen bg-white dark:bg-[#171717] text-black flex flex-col border-r border-white/10 transition-all duration-300
         ${isCollapsed ? "lg:w-20" : "lg:w-72"} 
@@ -152,20 +140,18 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
       `}
       >
         <div
-          className={`p-4 flex items-center ${
-            isCollapsed ? "justify-between lg:justify-center" : "justify-between"
-          } pt-5`}
+          className={`p-4 flex items-center ${isCollapsed ? "justify-between lg:justify-center" : "justify-between"} pt-5`}
         >
-          {/* FIXED LOGO LOGIC: lg:hidden added when collapsed to fix the bug */}
           {(!isCollapsed || isMobileOpen) && (
-            <span className={`font-['Inter'] text-xl font-bold text(--text-logo) dark:bg-[#171717] dark:text-gray-200 tracking-tight truncate ${isCollapsed ? 'lg:hidden' : ''}`}>
-              Ask-Freely
+            <span className="font-['Inter'] text-xl font-bold text(--text-logo) dark:bg-[#171717] dark:text-gray-200 tracking-tight">
+              Ask Freely
             </span>
           )}
-          
           <button
             onClick={() =>
-              isMobileOpen ? setIsMobileOpen(false) : setIsCollapsed(!isCollapsed)
+              isMobileOpen
+                ? setIsMobileOpen(false)
+                : setIsCollapsed(!isCollapsed)
             }
             className="p-2 dark:hover:bg-white/5 hover:bg-gray-200 rounded-lg text-black dark:text-gray-400 transition-colors cursor-pointer"
           >
@@ -179,18 +165,17 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
               onSelectChat(null);
               if (isMobileOpen) setIsMobileOpen(false);
             }}
-            className={`w-full mb-4 flex items-center ${
-              isCollapsed && !isMobileOpen ? "justify-center" : "gap-2 px-4"
-            } p-3 border border-(--primary-color) dark:border-white/20 rounded-xl hover:bg-(--primary-color) dark:hover:bg-[#2f2f2f] text-black dark:text-gray-200 transition-all text-sm font-medium truncate cursor-pointer`}
+            className={`w-full mb-4 flex items-center ${isCollapsed && !isMobileOpen ? "justify-center" : "gap-2 px-4"} p-3 border border-(--primary-color) dark:border-white/20
+rounded-xl hover:bg-(--primary-color) dark:hover:bg-[#2f2f2f] text-black dark:text-gray-200
+transition-all text-sm font-medium cursor-pointer`}
           >
             <Plus size={18} />
             {(!isCollapsed || isMobileOpen) && <span>New Chat</span>}
           </button>
         </div>
-
         <div className="flex-1 overflow-y-auto px-2 space-y-1 custom-sidebar-scroll">
           {loading ? (
-            <div className="text-center text-gray-500 dark:text-gray-400 mt-4 text-xs animate-pulse">
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-4">
               Loading Chats...
             </div>
           ) : (
@@ -201,9 +186,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
                     onSelectChat(chat._id);
                     if (isMobileOpen) setIsMobileOpen(false);
                   }}
-                  className={`p-3 cursor-pointer rounded-xl transition-colors duration-150 flex items-center ${
-                    isCollapsed && !isMobileOpen ? "justify-center" : "gap-3 pr-10"
-                  } 
+                  className={`p-3 cursor-pointer rounded-xl transition-colors duration-150 flex items-center ${isCollapsed && !isMobileOpen ? "justify-center" : "gap-3 pr-10"} 
                 ${activeChatId === chat._id ? "bg-(--secondary-color) dark:bg-[#212121] border border-white/10" : "hover:bg-(--primary-color) dark:hover:bg-[#212121]"}`}
                 >
                   <MessageSquare
@@ -215,18 +198,20 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
                     }
                   />
                   {(!isCollapsed || isMobileOpen) && (
-                    <span className={`truncate text-sm font-medium ${activeChatId === chat._id ? 'text-gray-600 dark:text-gray-400' : 'text-black dark:text-gray-300'}`}>
+                    <span className="truncate text-sm font-medium text-black dark:text-gray-300">
                       {chat.title || "New Chat"}
                     </span>
                   )}
                 </div>
 
-                {/* 3 dots */}
+                {/* 3-DOT BUTTON FIX FOR MOBILE AND PC */}
                 {(!isCollapsed || isMobileOpen) && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveMenuId(activeMenuId === chat._id ? null : chat._id);
+                      setActiveMenuId(
+                        activeMenuId === chat._id ? null : chat._id,
+                      );
                     }}
                     className={`absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/10 text-black dark:text-gray-400 transition-all
                     ${isMobileOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"} cursor-pointer 
@@ -236,6 +221,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
                   </button>
                 )}
 
+                {/* Dropdown Menu */}
                 {activeMenuId === chat._id && (
                   <div className="absolute right-2 top-10 z-110 bg-[#ebe9db] dark:bg-[#252525]  border border-white/10 rounded-lg shadow-2xl py-1 w-32 animate-in fade-in zoom-in-95">
                     <button
@@ -245,7 +231,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
                         setIsRenameModalOpen(true);
                         setActiveMenuId(null);
                       }}
-                      className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 font-bold text-black dark:text-white hover:bg-[#ded89f] dark:hover:bg-white/5"
+                      className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 font-bold text-black dark:text-white hover:bg-white/10 dark:hover:bg-white/5"
                     >
                       <Pencil size={14} /> Rename
                     </button>
@@ -266,12 +252,10 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
           )}
         </div>
 
-        <div className="p-4 border-t border-black/10 dark:border-white/10">
+        <div className="p-4 border-t  border-black/10 dark:border-white/10">
           <button
             onClick={() => setIsModalOpen(true)}
-            className={`w-full flex items-center ${
-              isCollapsed && !isMobileOpen ? "justify-center" : "gap-3"
-            } p-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all font-semibold cursor-pointer`}
+            className={`w-full flex items-center ${isCollapsed && !isMobileOpen ? "justify-center" : "gap-3"} p-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all font-semibold cursor-pointer`}
           >
             <LogOut size={20} />
             {(!isCollapsed || isMobileOpen) && <span>Logout</span>}
@@ -279,7 +263,6 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
         </div>
       </div>
 
-      {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-90 lg:hidden"
@@ -287,6 +270,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
         />
       )}
 
+      {/* RENAME, DELETE & LOGOUT MODALS CODE GOES HERE (No changes needed there) */}
       {/* --- RENAME MODAL --- */}
       {isRenameModalOpen && (
         <div className="fixed inset-0 z-1000 flex items-center justify-center p-4 bg-(--secondary-color)/30 dark:bg-black/20 backdrop-blur-sm">
@@ -323,10 +307,14 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
         <div className="fixed inset-0 z-1000 flex items-center justify-center p-4 bg-(--secondary-color)/30 dark:bg-black/70 backdrop-blur-sm">
           <div className="dark:bg-[#1e1e1e] w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/10 p-6 shadow-2xl text-center">
             <div className="mx-auto w-12 h-12 bg-red-500/10 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center mb-4 text-red-500">
-              <AlertTriangle size={24}/>
+              <AlertTriangle />
             </div>
-            <h3 className="text-lg text-black dark:text-white font-semibold mb-2">Delete Chat?</h3>
-            <p className="dark:text-gray-400 text-sm text-black mb-6">Are you sure? This chat will be deleted permanently.</p>
+            <h3 className="text-lg text-black dark:text-white font-semibold mb-2">
+              Delete Chat?
+            </h3>
+            <p className="dark:text-gray-400 text-sm text-black mb-6">
+              Are you Sure, This Chat Will Be Deleted Permanently?
+            </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
@@ -338,25 +326,32 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
                 onClick={handleDelete}
                 className="flex-1 p-2.5 rounded-xl text-black dark:text-white bg-[#a88a8a] hover:bg-[#967171]  dark:bg-red-600 dark:hover:bg-red-700 text-sm cursor-pointer"
               >
-                Yes, Delete
+                Yes
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* --- LOGOUT MODAL --- */}
+      {/* --- CONFIRMATION MODAL --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-999 flex items-center justify-center p-4 bg-(--secondary-color)/30 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="dark:bg-[#1e1e1e] bg-[#c7bfbf] w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
             <div className="p-6 text-center">
               <div className="mx-auto w-12 h-12 bg-red-500/10 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center mb-4">
-                <LogOut className="text-red-500" size={24} />
+                <AlertTriangle className="text-red-500" size={24} />
               </div>
-              <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Confirm Logout</h3>
-              <p className="dark:text-gray-400  text-black text-sm">Are you sure you want to logout? Your session will end.</p>
+              <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                Confirm Logout
+              </h3>
+              <p className="dark:text-gray-400  text-black text-sm">
+                Are you sure you want to logout? All sessions will end.
+              </p>
             </div>
-            <div className="p-4 dark:bg-[#252525] bg-[#bdc3c7] flex gap-2">
+
+            {/* Modal Actions */}
+            <div className="p-4 dark:bg-[#252525] bg-[#bdc3c7] flex flex-col sm:flex-row gap-2">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-[#a7b9c4] hover:bg-[#7c97b2] dark:hover:bg-white/10  dark:text-white dark:bg-white/5  border border-black/10 dark:border-white/10 text-black text-sm font-medium transition-colors cursor-pointer"
@@ -365,7 +360,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
               </button>
               <button
                 onClick={confirmLogout}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-red-400 hover:bg-red-500  dark:bg-red-600 dark:hover:bg-red-700 border border-black/10 dark:border-white/10 text-black dark:text-white text-sm font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-400 hover:bg-red-500 dark:bg-red-600 dark:hover:bg-red-700 border border-black/10 dark:border-white/10 text-black dark:text-white text-sm font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut size={16} /> Logout
               </button>
@@ -379,13 +374,8 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
 
 export default Sidebar;
 
-
 // Variable,Simple Matlab,Kyu Banaya? (Purpose)
 // activeChatId,"""Currently Open Chat""",Ye batata hai ki user abhi kaunsi chat padh raha hai. Iska use karke hum Sidebar mein us chat ko Highlight (blue/grey color) karte hain.
 // onSelectChat,"""The Messenger""","Ye ek function (prop) hai. Jab tum sidebar mein kisi chat pe click karte ho, ye function Parent (Home.js) ko bolta hai, ""Bhai, user ne ye ID select ki hai, iska data dikhao."""
 // activeMenuId,"""Menu Controller""","Jab tum 3-dots pe click karte ho, toh sirf usi chat ka dropdown khulna chahiye. Ye us chat ki ID store karta hai jiska menu abhi khula hua hai. Agar ye null hai, toh saare menus band hain."
 // actionChat,"""The Target""","Ye wo chat object hai jis par tum ""Action"" lene wale ho (Rename ya Delete). Modal khulne par humein pata hona chahiye ki kaunsi chat delete karni hai, ye uski puri jankari (ID, Title) hold karta hai."
-
-// <span className={transition-opacity duration-200 ${isCollapsed ? 'opacity-0' : 'opacity-100'}}>
-  // New Chat
-// </span>
