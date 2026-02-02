@@ -55,4 +55,25 @@ async function loginUser(req, res) {
          } });
 }
 
-module.exports = { registerUser, loginUser };
+async function logoutUser(req, res) {
+    try{
+        res.cookie("token",'',{
+            httpOnly:true,
+            expires: new Date(0),
+            sameSite: 'Strict',
+            secure: process.env.NODE_ENV === 'production'
+        })
+        console.log("User logged out, cookie cleared");
+        res.status(200).json({
+            success:true,
+            message:"User logged out successfully! See you soon!"}
+        )
+    }catch(err){
+        console.error("Logout Error:", err);
+        res.status(500).json({
+            success:false,
+            message:"Internal Server Error during logout"});
+    }
+}
+
+module.exports = { registerUser, loginUser, logoutUser };

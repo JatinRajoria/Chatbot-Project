@@ -24,7 +24,16 @@ async function queryMemory({queryVector, limit = 5, metadata}){
     return data.matches;
 }
 
-module.exports = {
-    createMemory,
-    queryMemory
+// services/vector.service.js
+async function deleteByIDs(idsArray) {
+    try {
+        // IDs se delete karne mein 'Illegal Condition' error kabhi nahi aayega
+        // Kyunki IDs hamesha indexed hoti hain
+        await chatGPTIndex.deleteMany(idsArray);
+    } catch (err) {
+        console.error("Pinecone ID Delete Error:", err.message);
+        throw err;
+    }
 }
+
+module.exports = { createMemory, queryMemory, deleteByIDs }
