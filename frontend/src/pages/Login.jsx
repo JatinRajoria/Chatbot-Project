@@ -29,6 +29,8 @@ const Login = () => {
       );
       if (response.status === 200) {
         navigate("/");
+        const username = response.data.user.fullName.firstName;
+        localStorage.setItem('userName', username);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");

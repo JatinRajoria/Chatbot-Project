@@ -105,7 +105,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
   }, []);
 
   return (
-    <>
+    <div className="relative">
       <style>{`
         .custom-sidebar-scroll {
           overflow-y: auto;
@@ -130,7 +130,8 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
       `}</style>
 
       {/* Mobile Toggle Button */}
-      <div className="lg:hidden fixed top-5 left-4 z-50">
+      {!isMobileOpen && (
+        <div className="lg:hidden fixed top-5 left-4 z-110">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -141,12 +142,13 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
           <Menu size={20} />
         </button>
       </div>
+      )}
 
       {/* Sidebar Main */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-        fixed lg:relative z-100 h-screen bg-white dark:bg-[#171717] text-black flex flex-col border-r border-white/10 transition-all duration-300
+        fixed lg:relative z-120 h-screen bg-white dark:bg-[#171717] text-black flex flex-col border-r border-white/10 transition-all duration-300
         ${isCollapsed ? "lg:w-20" : "lg:w-72"} 
         ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"}
       `}
@@ -162,15 +164,16 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
               Ask-Freely
             </span>
           )}
-          
-          <button
-            onClick={() =>
-              isMobileOpen ? setIsMobileOpen(false) : setIsCollapsed(!isCollapsed)
-            }
-            className="p-2 dark:hover:bg-white/5 hover:bg-gray-200 rounded-lg text-black dark:text-gray-400 transition-colors cursor-pointer"
-          >
-            {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+
+          <button onClick={() => setIsCollapsed(!isCollapsed)}  className="hidden lg:flex p-2 dark:hover:bg-white/5 hover:bg-gray-200 rounded-lg text-black dark:text-gray-400 transition-colors cursor-pointer">
+            <Menu size={20} />
           </button>
+
+          {isMobileOpen && (
+          <button onClick={() => setIsMobileOpen(false)} className="lg:hidden p-2 dark:hover:bg-white/5 hover:bg-gray-200 rounded-lg text-black dark:text-gray-400 transition-colors cursor-pointer">
+            <X size={20} />
+          </button>
+          )}
         </div>
 
         <div className="px-3">
@@ -373,7 +376,7 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

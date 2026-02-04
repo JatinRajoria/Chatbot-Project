@@ -24,7 +24,7 @@ const ChatPage = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#121212] text-white">
+        <div className="relative flex h-dvh w-full bg-[#121212] overflow-hidden text-white">
             <Sidebar
                 onSelectChat={handleSelectChat}
                 activeChatId={id}
