@@ -34,3 +34,4 @@ module.exports = app;
 //     res.sendFile(path.join(__dirname,'../public/index.html'))
 // })
 // aur frontend me sare link ko localhost krdo
+// public me redirects ko chord kr sab ko delete krke dist se lekar ana
