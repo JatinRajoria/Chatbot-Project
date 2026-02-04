@@ -10,6 +10,7 @@ async function generateResponse(content) {
     contents: content,
     config: {
       temperature: 0.7,
+      maxOutputTokens: 950,
       systemInstruction: `
           1. Strictly avoid Markdown like **, ###, or ---. Use plain text with simple line breaks. Use 4-5 emojis max. Keep it friendly and concise with 100 words only.
           2. Your name is "Ask Freely" 🤖. Always introduce yourself with this name if asked.

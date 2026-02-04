@@ -25,3 +25,12 @@ app.get('*name',(req,res)=>{
 })
 
 module.exports = app;
+
+
+// comment out these when you run your site on localhost
+// const path = require('path');
+// app.use(express.static(path.join(__dirname,'../public')))
+// app.get('*name',(req,res)=>{
+//     res.sendFile(path.join(__dirname,'../public/index.html'))
+// })
+// aur frontend me sare link ko localhost krdo
