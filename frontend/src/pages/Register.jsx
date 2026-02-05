@@ -79,8 +79,8 @@ const Register = () => {
           <div className="max-w-md mx-auto w-full">
             {/* Logo/Icon */}
             <div className="mb-2 flex justify-center md:justify-start">
-              <div className=" text-[white] bg-[#7D0A39] dark:text-[white] p-2 rounded-full">
-                <Zap className="dark:text-blue-500" size={48} />
+              <div className="text-[white] bg-[#7D0A39] p-2 rounded-full">
+                <Zap className="dark:text-[white]" size={48} />
               </div>
             </div>
 
