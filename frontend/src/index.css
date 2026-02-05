@@ -4,8 +4,6 @@
 
 /* Custom styles can be added here */
 @theme {
-  /* --bg-color: #121212;
-  --text-color: #e0e0e0; */
   --primary-color: #bdc3c7;
   --primary-color: #c5d2db;
   --secondary-color: #cfc6db;
@@ -14,31 +12,38 @@
   --aimessage-color: #d1c2c2;
   --tertiary-color: #2c3e50;
   --color-main-bg: #e8e2e2;
-  
-  /* --quadratic-color: #DBE6F6 ; */
+
   --quadratic-color: #bdc3c7;
   --hover-tertiary-color: #1f2b38;
   --text-logo: #141E30;
   --ai-text-color: #1E293B
-  /* #bdc3c7   #2c3e50 #1e130c */
 }
 
 .dark {
   --color-main-bg: #121212; /* Dark mode color */
 }
-html,
-body,
-#root {
-  height: 100dvh;
+
+.main-layout-wrapper {
+  height: 100vh;
   width: 100%;
   margin: 0;
   padding: 0;
   position: fixed;
-  /* overflow:hidden; */
+  overflow:hidden;
   /* Yeh niche wale white space aur bounce ko rokega */
   /* overscroll-behavior-y: none; */
   background-color: var(--color-main-bg);
   /* Dark theme ka base color */
+  transition: background-color 0.3s ease;
+}
+
+
+html,
+body,
+#root {
+
+  background-color: var(--color-main-bg);
+
   transition: background-color 0.3s ease;
 }
 

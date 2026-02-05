@@ -64,8 +64,8 @@ const Login = () => {
         <div className="md:w-1/2 px-10 pt-6 pb-5 md:px-14 md:pt-6 md:pb-8 flex flex-col bg-white">
           <div className="max-w-md mx-auto w-full">
             {/* Logo/Icon */}
-            <div className="mb-2 flex justify-center md:justify-start">
-              <div className=" text-[white] bg-[#7D0A39]  p-2 rounded-full">
+            <div className="mb-3 flex justify-center md:justify-start">
+              <div className=" text-[white] bg-[#7D0A39] dark:text-[white] p-2 rounded-full">
         <Zap className="dark:text-blue-500" size={48} />
       </div>
             </div>

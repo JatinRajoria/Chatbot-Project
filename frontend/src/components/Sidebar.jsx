@@ -148,9 +148,9 @@ const Sidebar = ({ onSelectChat, activeChatId, refreshTrigger }) => {
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-        fixed lg:relative z-120 h-screen bg-white dark:bg-[#171717] text-black flex flex-col border-r border-white/10 transition-all duration-300
+        fixed lg:relative z-120 h-full bg-white dark:bg-[#171717] text-black flex flex-col border-r border-white/10 transition-all duration-300
         ${isCollapsed ? "lg:w-20" : "lg:w-72"} 
-        ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"}
+        ${isMobileOpen ? "translate-x-0 w-72" : "-translate-x-full w-72 lg:translate-x-0"}
       `}
       >
         <div

@@ -16,7 +16,7 @@ const ChatWindow = ({ activeChatId, onFirstMessageSent }) => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        socketRef.current = io('https://ask-freely.onrender.com', {  //https://ask-freely.onrender.com
+        socketRef.current = io('https://ask-freely.onrender.com', {  //https://ask-freely.onrender.com  http://localhost:3000
             withCredentials: true,
             transports: ["websocket", "polling"], // ✅ Stability ke liye
             reconnectionAttempts: 5, // Limit lagao taaki logout ke baad infinite loop na chale
@@ -121,8 +121,9 @@ const ChatWindow = ({ activeChatId, onFirstMessageSent }) => {
                         background: #777; /* Hover par thoda aur light */
                     }
             `}</style>
+
             {/* Header */}
-            <div className="w-full h-16.25 p-5 pl-17 lg:p-5 border-b border-black/10 dark:border-white/5 bg-white dark:bg-[#171717] z-10 flex items-center justify-between transition-all duration-300">
+            <div className="w-full h-18.75 p-5 pl-17 lg:p-5 border-b border-black/10 dark:border-white/5 bg-white dark:bg-[#171717] z-10 flex items-center justify-between transition-all duration-300">
                 <h2 className="text-md font-semibold text-gray-600 dark:text-gray-300 text-center">
                     {activeChatId ? "Your Space to Ask & Explore" : "New Chat"}
                 </h2>
